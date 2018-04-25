@@ -88,11 +88,12 @@ switch (selection) {
             if (err) {
                 return console.log(err);
             }
-            console.log(data);
-            URL = "http://www.omdbapi.com/?t=" + data + "&y=&plot=short&apikey=trilogy";
-
-            // console.log(URL);
-            OMDB(URL);
+            var option  = data.split(" ");
+            var command = option[0];
+            input = option.splice(1).join(" ");
+            if (command == "spotify-this-song"){
+                Spotify_Search(input);
+            }
         });
         break;
     default:
