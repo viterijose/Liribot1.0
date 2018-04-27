@@ -6,29 +6,27 @@ var Twitter = require('twitter');
 var request = require("request");
 var fs = require("fs");
 
+
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 var URL = "";
 
 
 var selection = process.argv[2];
-// var chosen = process.arg[3];
 var input = process.argv.splice(3).join(" ");
+var info = " ";
+
 
 switch (selection) {
     case "movie-this":
 
         if (!input) {
-            fs.readFile("Log.txt", "utf8", function (err, data) {
-                if (err) {
-                    return console.log(err);
-                }
-                console.log(data);
-                URL = "http://www.omdbapi.com/?t=" + data + "&y=&plot=short&apikey=trilogy";
+            input = "Mr Nobody";
+            URL = "http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy";
 
-                // console.log(URL);
-                OMDB(URL);
-            });
+            // console.log(URL);
+            OMDB(URL);
+
         } else {
 
             URL = "http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy";
@@ -46,6 +44,8 @@ switch (selection) {
                         console.log("The movie's language: " + JSON.parse(body).Language);
                         console.log("The movie’s plot is: " + JSON.parse(body).Plot);
                         console.log("The movie’s actors are: " + JSON.parse(body).Actors);
+                        info = (JSON.parse(body).Title + ":" + "\n" + "The movie’s year: " + JSON.parse(body).Year + "\n" + "The movie’s IMDB rating is: " + JSON.parse(body).imdbRating + "\n" + "The movie’s RottenTomatoes rating is: " + JSON.parse(body).Ratings[1].value + "\n" + "The movie's language: " + JSON.parse(body).Language + "\n" + "The movie’s plot is: " + JSON.parse(body).Plot + "\n" + "The movie’s actors are: " + JSON.parse(body).Actors);
+                        log(info);
                     }
                 });
         }
@@ -83,19 +83,27 @@ switch (selection) {
 
         });
         break;
-        case "do-what-it-says":
+    case "do-what-it-says":
         fs.readFile("Random.txt", "utf8", function (err, data) {
             if (err) {
                 return console.log(err);
             }
-            var option  = data.split(" ");
+            var option = data.split(" ");
             var command = option[0];
             input = option.splice(1).join(" ");
-            if (command == "spotify-this-song"){
+            if (command == "spotify-this-song") {
                 Spotify_Search(input);
             }
         });
         break;
     default:
 
+}
+
+function log(information) {
+    fs.appendFile("Log.txt", information + "\n", function (err, data) {
+        if (err) {
+            return console.log(err);
+        }
+    });
 }
